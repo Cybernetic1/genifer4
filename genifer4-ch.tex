@@ -303,7 +303,15 @@ The relation of subsumption is \textit{intrinsic} to the logic.
 \centering
 \includegraphics[scale=0.75]{continuous-time-sequence.png}
 \end{figure}
-而乘积也是一个 discrete 序列，可以把它连续化变成时间 t 的\textbf{连续曲线}。 这曲线可以用 spline 表示，也就是\concept{多项式} (polynomial)。  这样或许可以用到 algebraic geometry （现代数学里很深奥的一个分支）里面的技巧。  一个多项式可以用它的 coefficients 表示，那就是一串数，很方便。 而多项式之间的变换也可以用多项式来描述，形成\concept{对偶空间} (dual space)，这类似於 logic 中，rule 可以作用在其他 rules 之上。 
+而乘积也是一个 discrete 序列，可以把它连续化变成时间 t 的\textbf{连续曲线}。
+
+这些曲线在 $K \times t$ 的空间中是像这样的：
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{polynomial-hairs.png}
+\end{figure}
+
+这些曲线可以用 spline 表示，也就是\concept{多项式} (polynomial)。  这样或许可以用到 algebraic geometry （现代数学里很深奥的一个分支）里面的技巧。  一个多项式可以用它的 coefficients 表示，那就是一串数，很方便。 而多项式之间的变换也可以用多项式来描述，形成\concept{对偶空间} (dual space)，这类似於 logic 中，rule 可以作用在其他 rules 之上。 
 
 \section{Formal power series}
 
@@ -353,6 +361,10 @@ rules & $\Leftrightarrow$ & non-linear operators acting on formal series \\
 
 \section{储存器}
 
+最后还不得不提，经典逻辑的结构实在太复杂了，我们的烦恼还未完...
+
+在 Genifer 3 white paper 里，我解释过需要引入有「储存器记忆」的逻辑。  那就是说需要加进一些逻辑「动作」，容许储存器的读和写。
+
 \begin{center}
 \colorbox{yellow}{\parbox{0.85\textwidth}{
 \begin{tabular}{ccc}
@@ -361,7 +373,6 @@ actions & $\Leftrightarrow$ & some meta-operations (?) over registers\\
 \end{tabular}
 }}
 \end{center}
-
 
 \begin{comment}
 \section{徵求合作者}
