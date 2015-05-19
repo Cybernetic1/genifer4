@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: genifer3.aux
+The style file: plain.bst
+Database file #1: AGI-book.bib
+Warning--entry type for "Goertzel2011" isn't style-file defined
+--line 969 of file AGI-book.bib
+You've used 3 entries,
+            2118 wiz_defined-function locations,
+            514 strings with 4346 characters,
+and the built_in function-call counts, 714 in all, are:
+= -- 60
+> -- 32
+< -- 0
++ -- 13
+- -- 10
+* -- 33
+:= -- 129
+add.period$ -- 8
+call.type$ -- 3
+change.case$ -- 12
+chr.to.int$ -- 0
+cite$ -- 3
+duplicate$ -- 31
+empty$ -- 67
+format.name$ -- 10
+if$ -- 148
+int.to.chr$ -- 0
+int.to.str$ -- 3
+missing$ -- 4
+newline$ -- 17
+num.names$ -- 6
+pop$ -- 27
+preamble$ -- 1
+purify$ -- 11
+quote$ -- 0
+skip$ -- 20
+stack$ -- 0
+substring$ -- 15
+swap$ -- 3
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 8
+warning$ -- 0
+while$ -- 6
+width$ -- 4
+write$ -- 30
+(There was 1 warning)
