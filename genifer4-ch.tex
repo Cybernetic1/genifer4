@@ -192,7 +192,7 @@ Cayley graph 的原理很简单，例如下图是 $\{ a, b \}$ 两个元素产�
 
 在 DVR 架构下，知识是用一个很长的 vector 表示：
 $$ K = \mathbf{v} = (v_1, v_2, ... , v_n) $$
-这在神经网络中很常见。  意思是： 每个\textbf{概念}不是用单一的神经元 (即一个 $v_i$) 表达，而是用整个 layer 的神经元表达 (即 $\mathbf{v}$)。 在这种表述下，一个概念是空间中的一个或多个 regions，它们可以是 disjoint 的。  $n$ 可以很大，例如 10,000。
+这在神经网络中很常见。  意思是： 每个\textbf{概念}不是用单一的神经元 (即一个 $v_i$) 表达，而是用整个 layer 的神经元表达 (即 $\mathbf{v}$)。 在这种表述下，一个概念是空间中的一个或多个 regions，它们可以是 disjoint 的。
 
 例如，向量空间的维数 $n=2$ 时，可以有这样的例子：
 \begin{figure}[H]
@@ -243,21 +243,51 @@ pattern matching & $\Leftrightarrow$ & filter: $K \rightarrow K$ \\
 而 KB 的所有逻辑结论 (full logical consequence) 就是：
 \begin{eqnarray} \nonumber
 K^\infty & = & \mbox{以上的单步重复无限次} \\ \nonumber
-         & = &  (\sum T_i) ^\infty (K) .
+         & = &  (\sum T_i) ^\infty (K^0) .
 \end{eqnarray}
 
 \section{学习}
 
-我们的目的是学习 $T_i$，亦即是说，在非线性算子的空间中寻找一套 $T_i$。
+学习算法是人工智能的瓶颈，有了好的 inductive learner，其他细节只是细节（例如用 reinforcement learning 解决）。
+
+逻辑的 inductive learning 有一个\textbf{双重结构}的特点，就是学习需要用到推导，但推导本身也是是一个复杂算法。
+
+换句话说，先用推导得到 $K^\infty$ （这本身需要算子的 iteration）：
+$$ K^\infty = (\sum T_i) ^\infty (K^0) .$$
+然后将结果 $K^\infty$ 和理想的 $K^*$ 比较，得到误差，而我们目标是找出一套 $T_i$ 令这误差最少。 $T_i$ 活在非线性算子的空间中。
 
 逻辑上我们希望达到的是：
-$$ K \cup \{ T_i \} \models E $$
-其中 E 是新的需要解释的例子或经验 (experience)。 所以理想的 $K^* = K + E$。 
+$$ K^0 \cup \{ T_i \} \models E $$
+其中 E 是新的需要解释的例子或经验 (experience)。 理想的答案是 $K^* = K^0 \cup E$。 
 
-误差 $\mathcal{E}$ 就是推导出来的 $K^\infty$ 减去理想的 $K^*$：
-$$ \mathcal{E} = K^\infty - K^* = (\sum T_i) ^\infty K - (K + E) . $$
+误差 $\mathcal{E}$ 是推导出来的 $K^\infty$ 减去理想的 $K^*$：
+$$ \mathcal{E} = K^\infty - K^* = (\sum T_i) ^\infty K^0 - (K^0 + E) . $$
 
-如果 $T_i$ 是可微的，梯度 $\partial\mathcal{E}/\partial T_i$ 就存在，我们就可以用梯度下降法。
+如果 $T_i$ 是可微的，梯度 $\partial\mathcal{E}/\partial T_i$ 存在，我们就可以用梯度下降法。
+
+和一般常见的的优化算法比较，例如 Newton-Raphson 只是一个算子的 iteration，
+$$ x^\infty = T^\infty x^0 $$
+就是所需答案。
+
+和传统神经网络的 back-propagation 比较，back-prop 的算法是：\\
+\tab （一粒神经元） \tab $y_j = \sigmoid( \sum W_{ij} x_i )$ \\
+\tab （多层结构） \tab $\mbox{output} = y_0 \circ y_1 \circ ... \circ y_n (\mbox{input})$ \\
+\tab （update 法则） \tab $ \mathbf{W}' = \mathbf{W} + \alpha \; \partial \mathcal{E} / \partial \mathbf{W} $
+
+两者比较：
+\begin{itemize}
+\item back-prop 的算子 $ y_0 \circ y_1 \circ ... \circ y_n $ 是来自很多层的神经网络结构，所以 back-prop 可以看成是 error 在\textbf{空间}中的传播。
+\item 我们的 iteration 是在时间中发生的，但似乎没有本质上分别。
+\end{itemize}
+
+我现时认为问题是： 那 $K$ 的空间可能太大（即使维数不大），因为它包含所有逻辑式子，而且，如果没有任何 approximation 的话，这问题完全和逻辑学习的原问题一模一样，这新的做法不会有任何改进，那顶多是原问题在连续空间中的 relaxation。 应该利用连续空间的 function approximation 来做点\textbf{一般化} (generalization)。
+
+但逻辑中也有它的一般化结构。  一般化的目的是\textbf{压缩}，也可以说学习就是压缩。  逻辑学习本身就是一种复杂度很高的压缩法（所以它才那么慢），那 $A \subseteq B$ 的 subsumption 关系，造成一个阶层 (hierarchical) 分类结构，这分类法相当於把数据的复杂性取对数 (take the logarithm of the size of the knoweldge base)，就像二分搜索 (binary search) 那样。  但因为逻辑学习有双重的 exponential 复杂度，可能单使用这个技巧还未够？
+
+研究逻辑学习的 Stephen Muggleton 在 2002 年关於用\textbf{遗传算法}做逻辑学习说：
+\begin{quote}
+\textit{「在一阶逻辑学习系统里，验证假设的方法通常是呼叫一个逻辑证明器（例如 Prolog 解译器）去找出那假设对学习例子的正和负覆盖。  已知道这是一阶概念学习中复杂而费时的一步。 在基因学习里，这情况更差，因为每一代都有一群假设要验证。」}\footnote{\, \textit{"The usual way for evaluating a hypothesis in first-order concept learning systems is to repeatedly call a theorem prover (eg Prolog interpreter) on training examples to find out positive and negative coverage of the hypothesis.  This step is known to be a complex and time-consuming task in first-order concept learning.  In the case of genetic-based systems this situation is even worse, because we need to evaluate a population of hypothesis in each generation.  This problem is another important difficulty when applying GAs in first-order concept learning."}}
+\end{quote}
 
 \begin{comment}
 压缩的方法必须是 ``semantic distance preserving''，意即： 在语义空间中相似的点被压缩到相邻的逻辑範式。
