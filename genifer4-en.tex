@@ -70,7 +70,7 @@
 \setlength{\evensidemargin}{1cm}
 \setlength{\textwidth}{14cm}
 
-\title{\textcolor{blue}{Genifer 4.0 theoretical notes}}
+\title{\textcolor{blue}{Genifer 4.1 theoretical notes}}
 \author{YKY (\textit{甄景贤})}
 % \institute{}
 
@@ -93,6 +93,77 @@
 \begin{comment}
 \noindent 本文介绍人工智能 Genifer4 的理论，特别是对数学专业的人。 Genifer4 的目的是将 logic-based AI (例如 OpenCog, NARS, Genifer3) 转移到向量空间的架构下，令我们可以使用「连续」的技巧，例如算子、迭代法、梯度下降等。 这些技巧可能比较快。
 \end{comment}
+
+\section{New insights}
+
+最近在香港和朋友 Dr 陈启良和 Dr 譚志斌 (?) 谈过之后：
+
+\subsection{命题空间的 dimension}
+
+在知识空间中，如果 $v_1, v_2, v_3$ 是三个互不相关的命题，那么它们的线性相关 $ a_1 v_1 + a_2 v_2 = a_3 v_3 $ 是不容许的，否则会出现谬误。 结论是： 要么知识空间的 dimension 等於命题的总数（那会很大，可能无限大），要么放弃 $a_i$ 是真假值的做法。
+
+人的生字 (vocabulary) 的个数大约在 3,000 至 10,000's 之间。  暂时假设我们可以用 dimensionality reduction 把原始概念的个数缩小到 3000，那么概念空间 $C$ 的维数就是 3000。
+
+如果只考虑像 $a\, R\, b$ 那样的关系，则命题空间是 $C \times C \times C$，维数是 $3000^3 = 9G $。 这似乎是当代计算机勉强可以处理的。
+
+\subsection{「连续性」}
+
+第二个问题是「连续」指的是什么。 例如命题 $P_1$ =「小明爱小娟」，$P_2$ =「小强爱踢足球」，那么由 $P_1$ 变化到 $P_2$ 必然会有 discrete jump，那是无可置疑的。 除非我们重新定义命题是像 $k_1 P_1+ k_2 P_2$ 那样的东西，才可以有「连续变化」；  这一点需要再加以精确化。
+
+我发觉「连续空间」不是一个严谨的术语，因为在 discrete 空间中也可以定义 "continuous" 这概念，例如在 computer science 的 functional programming 里有 domain theory、 denotational semantics 等，常常谈到离散空间中的连续函数。 而且「可微分」的概念也有一些 generalizations，例如 Fr\'{e}chet derivatives（在泛函空间中）。
+
+\section{Neural Tensor Network}
+
+Andrew Ng 是香港人，Coursera 的 machine learning 教授，他在 Stanford，最近加入了百度。 他和合作者提出了 NTN 模型：
+$$ \top(a\, R\, b) = u^T \; \sigmoid \, (a^T \, U \, b + W {{a}\choose{b}} + c ) $$
+$\top(a\, R\, b)$ 表示 $a\, R\, b$ 这个关系的\textbf{强度}。\\
+$U$ 是一个 tensor，取两个向量 $a, b$ 给出第三个向量 $a^T \, U \, b$（它服从张量的双线性性质）。\\
+$W$ 是一个矩阵，$W {{a}\choose{b}}$ 是一层传统的神经网络，$\sigmoid$ 是一个非线性函数。\\
+$u^T$ 是一粒神经元，作用是把各个分量加起来，得出一个数。
+
+\section{Paul Smolensky's tensor representation}
+
+Paul Smolensky 的书是《The harmonic mind》(2006)，第一卷是数学理论，第二卷是语言学理论。
+
+他提出用张量来表示关系：
+\begin{eqnarray}
+father(john, pete) & \Leftrightarrow & father \otimes john \otimes pete \nonumber \\
+Var_1 : val_1, Var_2 : val_2 & \Leftrightarrow & Var_1 \otimes val_1 + Var_2 \otimes val_2 \nonumber 
+\end{eqnarray}
+第二句的意思是，variable 1 的值是 value 1，variable 2 的值是 value 2。 
+
+我在博客上解释过，tensor 是所有 bi-linear forms 的 universal form。 这个表示法的意义是……？
+
+\section{Metric embedding}
+
+最近有一本新书： [Mikhail Ostrovskii 2013] \textit{Metric embeddings: bi-Lipschitz and coarse embeddings into Banach spaces}，它似乎正正讲述了我们将 logic 嵌入到「连续空间」的问题。
+
+What is bi-Lipschitz condition?  A map $f: X \rightarrow Y$ is called a \textit{C-bi-Lipschitz embedding} if there exists $r > 0$ such that
+$$ \forall u,v \in X, \;\; r\, d(u,v) \leq d(f(u), f(v)) \leq r C\, d(u,v) $$
+for some $C < \infty$.  The smallest constant $C$ for which there exists $r > 0$ such that the above is satisfied is called the \textit{distortion} of the map $f$.  这似乎定义了「远的保持远、近的保持近」的意思。
+
+\section{SVMs and the kernel trick}
+
+印象中 \textbf{SVM} (support vector machine) 似乎可以将非凸的问题转化成凸优化的问题； 可不可以将这个想法应用到我们的问题上呢？
+
+SVM 的算法，首先用 kernel trick 将 data points 转换到高维空间，然后在高维空间中进行线性的 hyperplane 分割。
+
+所谓 \textbf{kernel trick} 是指： 给定一个 inner product，它暗含了一个到高维空间的转换 $\phi$ （但这个转换不需要真的计出来）。
+
+%A given dot product implicitly defines a transformation $\phi$ into higher dimensional space.  In such a space the data set might be linearly separable.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{kernel-trick.png}
+\end{figure}
+
+而，在高维空间中用线性分割，那 error term 是一些正交距离，所以是 \textbf{quadratic form}，所以这问题是\textbf{凸优化}。
+
+%The \textbf{quadratic form} comes from the linear separation, and that's why the problem is a convex optimization problem.
+
+我们的问题是性质不同的，但两者似乎有些相似... 
+
+\section{Old stuff}
 
 For readers curious about what I'm doing in Genifer 4, it is really not a big deal, basically I am trying to transfer logic to a \textbf{continuous setting}, so that I can apply iterative approximation techniques, such as gradient descent.
 
