@@ -8,7 +8,7 @@
 \setCJKmainfont[BoldFont=SimHei,ItalicFont=KaiTi]{SimSun}
 % \setCJKsansfont{SimHei}
 % \setCJKmonofont{SimKai}
-\setmainfont{Arial}
+% \setmainfont{Arial}
 
 \usepackage{cite}
 \usepackage{graphicx}
@@ -70,6 +70,8 @@
 \setlength{\evensidemargin}{1cm}
 \setlength{\textwidth}{14cm}
 
+\linespread{1.2}
+
 \title{\textcolor{blue}{Genifer 4.1 理论笔记}}
 \author{YKY (\textit{甄景贤})}
 % \institute{}
@@ -96,7 +98,7 @@
 
 \section{New insights}
 
-最近在香港认识了两个朋友，Dr 陈启良和 Dr 譚志斌 (?)，和他们谈过我的 AI 理论之后获益良多：
+最近在香港认识了两个朋友，Dr 陈启良 (CUHK) 和 Dr 譚志斌 (HSMC)，和他们谈过我的 AI 理论之后获益良多：
 
 \subsection{命题空间的 dimension}
 
@@ -104,7 +106,27 @@
 
 人的词汇 (vocabulary) 的个数大约在 3,000 至 10,000's 之间。  暂时假设我们可以用 dimensionality reduction 把原始概念的个数缩小到 3000，那么概念空间 $C$ 的维数就是 3000。
 
-如果只考虑像 $a\, R\, b$ 那样的关系，则命题空间是 $C \times C \times C$，维数是 $3000^3 = 9G $。 现时的电脑记忆（例如 GPU）似乎可以处理。
+如果只考虑像 $a\, R\, b$ 那样的关系，则命题空间是 $C \times C \times C$，维数是 $3000 \times 3 = 9K $。 但如果是 $ C \otimes C \otimes C $ 则维数是 $ 3000^3 = 9G $。 现时的电脑记忆（例如 GPU）似乎可以处理后者。
+
+\subsection{Distributive representation}
+
+如果每个概念是向量空间中的一个独立分量，似乎很浪费空间。  在神经网络中通常用\textbf{分布式}的表示法：
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{distributive-vector-representation-linear.png}
+\end{figure}
+
+一粒神经元的公式是：  $y = \sigmoid (w^T x \leq b) $
+
+（但如果只有一层神经元）那非线性函数可以不理（它不影响 decision boundary）。
+
+$ (w^T x \leq b) $ 表示一个 hyperplane 的切割。
+
+一个概念就是一组 hyperplanes 切割而成的多面体 (polyhedron)，\\
+\tab \tab $c : (Wx \leq B) $。\\
+矩阵 $W$ 对应於一层神经网络中的 weights。
+
+问题是这个表示法，如何表示乘积？  在这个表示法中，「线性无关」代表什么？
 
 \subsection{「连续性」}
 
@@ -121,7 +143,7 @@ $$ T_1 v + T_2 v + ... + T_n v = \mathcal{T} v $$
 但这种近似必须有代价，否则违反了两项原则：
 \begin{enumerate}
 \item Turing 已经很有远见地意识到，逻辑推导的普适算法是不存在的，因为它违反了停机原理 (halting problem)。 后者是用 Cantor 的集合论中的 diagonal argument 证明的。 如果我们的优化算法必然会给出答案，而答案又可以转换回逻辑，那是不可能的。 所以在近似过程中必然会有某些误差。
-\item 其二，如果 $P \neq NP$，我们的算法也不可能总是在 polynomial time 之内回覆正确答案。
+\item 如果 $P \neq NP$，我们的算法也不可能总是在 polynomial time 之内回覆正确答案。
 \end{enumerate}
 
 还有一个 "second-order" 的想法。  在 first-order 我们的算子是这个形式：
@@ -130,9 +152,21 @@ $$ T: V \rightarrow V $$
 
 如果我们简单地将 $\mathcal{T}$ 近似，那些逻辑推导就会有错误。  或者应用某个 duality 之后，近似的做法会有较好结果？
 
+\subsection{逻辑是什么？}
+
+总结一下逻辑是什么：  一个逻辑系统 $\mathcal{L} = \{ C, P, d(\cdot,\cdot), \supseteq \}$：
+\begin{enumerate}
+\item 原子概念集 $C \ni c_1, c_2, ...$
+\item 命题集 $P \ni p_1, p_2, ...$ （可以限制在简单关系 $a\, R\, b$）
+\item 连结词 (conjunction) $p_1 \wedge p_2$ 或 $p_1 + p_2$
+\item 概念之间的距离 $d(c_1, c_2)$
+\item 概念之间的偏序 (partial order) $c_1 \supseteq c_2$
+\end{enumerate}
+我们想把这个结构映射到 Banach 空间。 那个 $\supseteq$ 关系可能要用空间中的 cones 来表示，而且用 hyperbolic geometry 可能比较好；  这是后话。
+
 \section{Neural Tensor Network}
 
-Andrew Ng 是香港人，Coursera 的 machine learning 教授，他在 Stanford，最近加入了百度。 他和合作者提出了 NTN 模型：
+Andrew Ng 是香港人，Coursera 的 machine learning 教授，他在 Stanford，最近加入了百度。 他和合作者提出了 NTN 模型\cite{Socher2013}：
 $$ \top(a\, R\, b) = u^T \; \sigmoid \, (a^T \, U \, b + W {{a}\choose{b}} + c ) $$
 $\top(a\, R\, b)$ 表示 $a\, R\, b$ 这个关系的\textbf{强度}。\\
 $U$ 是一个 tensor，取两个向量 $a, b$ 给出第三个向量 $a^T \, U \, b$（它服从张量的双线性性质）。\\
@@ -141,7 +175,7 @@ $u^T$ 是一粒神经元，作用是把各个分量加起来，得出一个数�
 
 \section{Paul Smolensky's tensor representation}
 
-Paul Smolensky 的书是《The harmonic mind》(2006)，第一卷是 AI 理论，第二卷是语言学理论。
+Paul Smolensky 的书是《The harmonic mind》(2006)\cite{Smolensky2006}，第一卷是 AI 理论，第二卷是语言学理论。
 
 他提出用张量来表示关系：
 \begin{eqnarray}
@@ -150,7 +184,7 @@ Var_1 : val_1, Var_2 : val_2 & \Leftrightarrow & Var_1 \otimes val_1 + Var_2 \ot
 \end{eqnarray}
 第二句的意思是，variable 1 的值是 value 1，variable 2 的值是 value 2。 
 
-我在博客\footnote{\href{http://geniferology.blogspot.hk/2015/03/what-are-tensors.html}{blog post}}上解释过，tensor 是所有 bi-linear forms 的 universal form。 如果有向量空间 U 和 V，
+我在博客\footnote{\href{http://geniferology.blogspot.hk/2015/03/what-are-tensors.html}{blog post}}上解释过，tensor 是所有 bi-linear forms 的 universal form。 如果有向量空间 $U$ 和 $V$，
 \begin{eqnarray}
 T: & U \otimes V \rightarrow W \nonumber \\
 t: & u \otimes v \mapsto w \nonumber 
@@ -159,11 +193,11 @@ t: & u \otimes v \mapsto w \nonumber
 $$ \mbox{线性无关集} \otimes \mbox{线性无关集} \mapsto \mbox{线性无关集} $$
 而这正是我们需要的，因为根据「scalar = 逻辑命题真假值」的诠释，这正是命题之间不「相撞」的条件。
 
-Antony Browne \& Ron Sun 的较早的论文《Connectionist inference models, 2001》有讲述更多 neural-symbolic integration 的做法。
+Antony Browne \& Ron Sun 的较早的论文《Connectionist inference models, 2001》\cite{Browne2001}有讲述更多 neural-symbolic integration 的做法。
 
 \section{Metric embedding}
 
-最近有一本新书： [Mikhail Ostrovskii 2013] \textit{Metric embeddings: bi-Lipschitz and coarse embeddings into Banach spaces}，它似乎正正讲述了我们将 logic 嵌入到「连续空间」的问题。
+最近有一本新书：[Mikhail Ostrovskii 2013] \textit{Metric embeddings: bi-Lipschitz and coarse embeddings into Banach spaces}\cite{Ostrovskii2013}，它似乎正正讲述了我们将 logic 嵌入到「连续空间」的问题。
 
 What is the bi-Lipschitz condition?  A map $f: X \rightarrow Y$ is called a \textit{C-bi-Lipschitz embedding} if there exists $r > 0$ such that
 $$ \forall u,v \in X, \;\; r\, d_X(u,v) \leq d_Y(f(u), f(v)) \leq r C\, d_X(u,v) $$
