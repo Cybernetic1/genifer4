@@ -78,10 +78,10 @@
 
 \begin{document}
 
-\tab\tab\tab \parbox{9cm}{\textit{数学的终极目标，是消除所有智力思考的需要。}}
+\tab\tab\tab \parbox{9cm}{\textit{No problem can withstand the assault of sustained thinking.}}
 % \vspace{-0.5cm}
 \begin{flushright}
-\textemdash\, Alfred North Whitehead \hspace{1cm}
+\textemdash\, Voltaire \hspace{3cm}
 \end{flushright}
 
 \sffamily
@@ -95,6 +95,12 @@
 \begin{comment}
 \noindent 本文介绍人工智能 Genifer4 的理论，特别是对数学专业的人。 Genifer4 的目的是将 logic-based AI (例如 OpenCog, NARS, Genifer3) 转移到向量空间的架构下，令我们可以使用「连续」的技巧，例如算子、迭代法、梯度下降等。 这些技巧可能比较快。
 \end{comment}
+
+我也想写到满纸公式，但不能写公式的时候唯有做文字理论了。
+
+Distributive 的目的是 graceful。  如果用\textbf{点}的话可能没有 grace。
+
+
 
 \section{New insights}
 
@@ -146,23 +152,75 @@ $$ T_1 v + T_2 v + ... + T_n v = \mathcal{T} v $$
 \item 如果 $P \neq NP$，我们的算法也不可能总是在 polynomial time 之内回覆正确答案。
 \end{enumerate}
 
+\subsection{Second-order}
+
 还有一个 "second-order" 的想法。  在 first-order 我们的算子是这个形式：
 $$ T: V \rightarrow V $$  
-但 second-order 的做法是将所有\textbf{物体}都看成是算子，算子可以作用在算子之上，这似乎是一种 duality。 暂时还未知道细节。
+但 second-order 的做法是将所有\textbf{物体}都看成是算子，算子可以作用在算子之上，这似乎是一种 duality。 
 
-如果我们简单地将 $\mathcal{T}$ 近似，那些逻辑推导就会有错误。  或者应用某个 duality 之后，近似的做法会有较好结果？
+如果我们简单地将 $\mathcal{T}$ 近似，那些逻辑推导就会有错误。  或者应用某个 duality 或二次形式后，近似的做法会有较好结果？
+
+从另一个角度，详细一点分析那\textbf{推导}和\textbf{学习}的过程。  推导的过程是：
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{2nd-order-maps-0.png}
+\end{figure}
+可以将它简写，并加上反向的 $L$ map：
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{2nd-order-maps-1.png}
+\end{figure}
+$L$ 是由结论 $K_\infty$ 到法则 $R$ 的映射，可以叫 $L$ 做 learning map。  这个 map 比较复杂，它相当於学习的过程，通常要用 iteration 逼近。  而且，有无限多个 $R$ 可以符合条件，我们通常选取长度短的 $R$，这是 minimum description length 原理，又或者选取资讯\textbf{压缩比}最高者。
+
+上面的 map 可以再简化，因为 $K_0$ 是常项，可以省略。  写成垂直形式：
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{2nd-order-maps-2.png}
+\end{figure}
+
+现在如果我们改变推导的结果 $K^*$，亦即改变 $K_\infty$，那么 $R$ 亦要改变成 $R'$，但 $L$ 未必要改变。  学习这个 $L$ 是一种二次形式的学习。
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{2nd-order-maps-3.png}
+\end{figure}
 
 \subsection{逻辑是什么？}
 
-总结一下逻辑是什么：  一个逻辑系统 $\mathcal{L} = \{ C, P, d(\cdot,\cdot), \supseteq \}$：
+現在概括一下逻辑是什么：  一个逻辑系统 $\mathcal{L} = \{ C, P, d(\cdot,\cdot), \subseteq \}$：
 \begin{enumerate}
 \item 原子概念集 $C \ni c_1, c_2, ...$
 \item 命题集 $P \ni p_1, p_2, ...$ （可以限制在简单关系 $a\, R\, b$）
 \item 连结词 (conjunction) $p_1 \wedge p_2$ 或 $p_1 + p_2$
+\item 箭头 $p_1 + p_2 + ... \rightarrow p_0$
 \item 概念之间的距离 $d(c_1, c_2)$
-\item 概念之间的偏序 (partial order) $c_1 \supseteq c_2$
+\item 概念之间的偏序 (partial order) $c_1 \subseteq c_2$
 \end{enumerate}
-我们想把这个结构映射到 Banach 空间。 那个 $\supseteq$ 关系可能要用空间中的 cones 来表示，而且用 hyperbolic geometry 可能比较好；  这是后话。
+
+但其实 $d(\cdot, \cdot)$ 和 $\subseteq$ 并不是逻辑\textbf{内在}的，它们是从资料中 induce 出来的。 其原理是基於 Liebniz extensionality：
+$$ f = g \quad \Leftrightarrow \quad \forall x. \; f(x) = g(x). $$
+它原本是描述两个函数的相等，但我们可以将它普及到任何概念的乘积：
+$$ c_1 \approx c_2 \quad \Leftrightarrow \quad \forall_\# P, P'. \; P[c_1], P'[c_2]. $$
+这是说： 概念 $c_1$ 和 $c_2$ 相似，如果它们经常出现在相似的命题之中。  $\forall_\#$ 是 probabilistic quantification，它计算所有命题中相似者的份数。  $d(\cdot, \cdot)$ 是 $\approx$ 的量度。
+
+有了 $\approx$ 关系，可以用 hierarchical clustering 建立 $\subseteq$ 关系（注意这里的 $\subseteq$ 包含我们平时所说的 $\subseteq$ 和 $\in$ 关系）。
+
+我们想把这个结构映射到 Banach 空间。
+
+\begin{comment}
+\section{Hyperbolic 的好处 ???}
+
+那个 $\supseteq$ 关系可能要用空间中的 cones 来表示，而且用 hyperbolic geometry 可能比较好。
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{Euclidean-cones.png}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{hyperbolic-cones.png}
+\end{figure}
+\end{comment}
 
 \section{Neural Tensor Network}
 
