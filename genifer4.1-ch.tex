@@ -130,11 +130,7 @@
 
 其中最一般的範畴是 monoidal categories，或者叫 tensor categories。  在向量空间里的 tensor product 是这个範畴中的一个例子。  换句话说，我们基本上是用 tensor product 来表达句子； 範畴论只是将这一点说得更一般化和抽象化而已。
 
-\section{New insights}
-
-最近在香港认识了两个朋友，Dr 陈启良 (CUHK) 和 Dr 譚志斌 (HSMC)，和他们谈过我的 AI 理论之后获益良多：
-
-\subsection{命题空间的 dimension}
+\section{命题空间的 dimension}
 
 在知识空间中，如果 $v_1, v_2, v_3$ 是三个互不相关的命题，那么它们的线性相关 $ a_1 v_1 + a_2 v_2 = a_3 v_3 $ 是不容许的，否则会出现谬误。 结论是： 要么知识空间的 dimension 等於命题的总数（那会很大，可能无限大），要么放弃 $a_i$ 是真假值的做法。
 
@@ -144,9 +140,8 @@
 如果只考虑像 $a\, R\, b$ 那样的关系，则命题空间是 $C \times C \times C$，维数是 $3000 \times 3 = 9K $。 但如果是 $ C \otimes C \otimes C $ 则维数是 $ 3000^3 = 9G $。 现时的电脑记忆（例如 GPU）似乎可以处理后者。
 }
 
-\subsection{Distributive representation}
+\section{Distributive representation (分布式表示法)}
 
-\hilight{
 如果每个概念是向量空间中的一个独立分量，似乎很浪费空间。  在神经网络中通常用\textbf{分布式}的表示法：
 \begin{figure}[H]
 \centering
@@ -163,16 +158,20 @@ $ (w^T x \leq b) $ 表示一个 hyperplane 的切割。
 \tab \tab $c : (Wx \leq B) $。\\
 矩阵 $W$ 对应於一层神经网络中的 weights。
 
-问题是这个表示法，如何表示乘积？  在这个表示法中，「线性无关」代表什么？
-}
+问题： 在这个表示法中，「线性无关」代表什么？
 
-\subsection{「连续性」}
+\section{「连续性」}
 
 第二个问题是「连续」指的是什么。 例如命题 $P_1$ =「小明爱小娟」，$P_2$ =「小强爱踢足球」，那么由 $P_1$ 变化到 $P_2$ 必然会有 discrete jump，那是无可置疑的。 除非我们重新定义命题是像 $k_1 P_1+ k_2 P_2$ 那样的东西，才可以有「连续变化」；  这一点需要再加以精确化。
 
 我发觉「连续空间」不是一个严谨的术语，因为在 discrete 空间中也可以定义 "continuous" 这概念，例如在 computer science 的 functional programming 里有 domain theory、 denotational semantics 等，常常谈到离散空间中的连续函数。 而且「可微分」的概念也有一些 generalizations，例如 Fr\'{e}chet derivatives（在泛函空间中）。
 
-\subsection{近似}
+有个方法可以表示我想说的「连续空间」的性质： 在两点 $x \neq y$ 之间，总可以找到第三点 $z$，位置介乎 $x$ 与 $y$ 之间，换句话说：
+$$ d(x,z) < d(x,y) \wedge d(y,z) < d(x,y). $$
+
+似乎 Hausdoff 性质就是我想说的「连续空间」的性质： A Hausdorff space is a topological space in which distinct points have disjoint neighbourhoods.  
+
+\section{近似}
 
 那些算子或许可以合写成一个:
 $$ T_1 v + T_2 v + ... + T_n v = \mathcal{T} v $$
@@ -184,16 +183,15 @@ $$ T_1 v + T_2 v + ... + T_n v = \mathcal{T} v $$
 \item 如果 $P \neq NP$，我们的算法也不可能总是在 polynomial time 之内回覆正确答案。
 \end{enumerate}
 
-\subsection{Second-order}
+\section{``Second-order''}
 
-\hilight{
 还有一个 "second-order" 的想法。  在 first-order 我们的算子是这个形式：
 $$ T: V \rightarrow V $$  
 但 second-order 的做法是将所有\textbf{物体}都看成是算子，算子可以作用在算子之上，这似乎是一种 duality。 
 
 如果我们简单地将 $\mathcal{T}$ 近似，那些逻辑推导就会有错误。  或者应用某个 duality 或二次形式后，近似的做法会有较好结果？
 
-从另一个角度，详细一点分析那\textbf{推导}和\textbf{学习}的过程。  推导的过程是：
+从另一个角度看，详细一点分析那\textbf{推导}和\textbf{学习}的过程。  推导的过程是：
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{2nd-order-maps-0.png}
@@ -211,18 +209,16 @@ $L$ 是由结论 $K_\infty$ 到法则 $R$ 的映射，可以叫 $L$ 做 learning
 \includegraphics[scale=0.6]{2nd-order-maps-2.png}
 \end{figure}
 
-现在如果我们改变推导的结果 $K^*$，亦即改变 $K_\infty$，那么 $R$ 亦要改变成 $R'$，但 $L$ 未必要改变。  学习这个 $L$ 是一种二次形式的学习。
+现在如果我们改变推导的结果 $K^*$，亦即改变 $K_\infty$，那么 $R$ 亦要改变成 $R'$，但 $L$ 未必要改变。  学习这个 $L$ 是一种\textbf{二次形式}的学习。
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{2nd-order-maps-3.png}
 \end{figure}
 
 问题是 $R$ 的空间太大... 但 $R$ 是所有有意识的知识... 不想直接近似 $R$，但如何间接地近似它？  
-}
 
-\subsection{Metric 从何而来？}
+\section{Metric 从何而来？}
 
-\hilight{
 現在概括一下\textbf{逻辑系统}是什么。  $\mathcal{L} = \{ C, P, +, \rightarrow, d(\cdot,\cdot), \subseteq \}$ 包含以下元素：
 \begin{enumerate}
 \item 原子概念集 $C \ni c_1, c_2, ...$
@@ -256,7 +252,6 @@ $\approx$ 和 $\subseteq$ 之间的关系是：
 虽然这个 metric 很难计算，但它可能是我们的学习问题里唯一比较合理的结构，除了用它之外可能没有其他选择。
 
 这个 metric 其实不是良好定义的，因为它可能不会 converge。  举例来说，Reimann hypothesis 原来和质数的分布有关，但这关系在1859年以前人们还不知道。  在逻辑上我们可以推导出很深的关系，这似乎是永无止境的。  但如果我们假设可以得到近似的 metric，这个 heuristic 也许还不错。
-}
 
 \section{Neural Tensor Network}
 
@@ -271,13 +266,28 @@ $u^T$ 是一粒神经元，作用是把各个分量加起来，得出一个数�
 
 Paul Smolensky 的书是《The harmonic mind》(2006)\cite{Smolensky2006}，第一卷是 AI 理论，第二卷是语言学理论。
 
-他提出用张量来表示关系：
+他提出用张量来表示关系，一般而论：
 \begin{eqnarray}
 father(john, pete) & \Leftrightarrow & father \otimes john \otimes pete \nonumber \\
 Var_1 : val_1, Var_2 : val_2 & \Leftrightarrow & Var_1 \otimes val_1 + Var_2 \otimes val_2 \nonumber 
 \end{eqnarray}
-第二句的意思是，variable 1 的值是 value 1，variable 2 的值是 value 2。 
+第二句的意思是，$variable_1$ 的值是 $value_1$，$variable_2$ 的值是 $value_2$。 
 
+他引入了 ``role'' 和 ``filler'' 的概念：  $variable_i$ 是 role， $value_i$ 是 filler。 用这个方法来做 variable binding，好处是可以避免 $ A \cdot B = B \cdot A $ 的问题。
+
+举例来说，在自然语言中可以有这个 句子结构：
+$$ s = \quad \raisebox{-.5\height}{\includegraphics[scale=0.75]{Smolensky-tree.png}} $$
+
+$r_0$ 和 $r_1$ 分别是树的左右孩子的 roles。 用张量积表示：
+\begin{eqnarray}
+s &=& A \otimes r_0 + q \otimes r_1 \nonumber \\
+q &=& B \otimes r_0 + C \otimes r_1 \nonumber \\
+\therefore \; s &=& A \otimes r_0 + B \otimes r_0 \otimes r_1 + C \otimes r_1 \otimes r_1 \nonumber
+\end{eqnarray}
+
+张量积的好处是， $r_0$ 和 $r_0 \otimes r_1$ 是不同的元素，它们彼此不会「相撞」。  坏处是当乘积的长度增加时，dimension 也增加得很快。 
+
+下表是 Smolensky 表示法的总结：
 \begin{center}
 \begin{tabular}{|c|c|c|}
 \hline
@@ -292,26 +302,31 @@ Recursive structure & \raisebox{-.5\height}{\includegraphics[scale=0.5]{Smolensk
 \end{tabular}
 \end{center}
 
-$$ s = \quad \raisebox{-.5\height}{\includegraphics[scale=0.75]{Smolensky-tree.png}} $$
-
-\begin{eqnarray}
-s &=& A \otimes r_0 + q \otimes r_1 \nonumber \\
-q &=& B \otimes r_0 + C \otimes r_1 \nonumber \\
-\therefore \; s &=& A \otimes r_0 + B \otimes r_0 \otimes r_1 + C \otimes r_1 \otimes r_1 \nonumber
-\end{eqnarray}
-
-和我的 naive 办法相比，有什么分别？  
+% 和我的 naive 办法相比，有什么分别？  
 
 我在博客\footnote{\href{http://geniferology.blogspot.hk/2015/03/what-are-tensors.html}{blog post}}上解释过，tensor 是所有 bi-linear forms 的 universal form。 如果有向量空间 $U$ 和 $V$，
 \begin{eqnarray}
 T: & U \otimes V \rightarrow W \nonumber \\
 t: & u \otimes v \mapsto w \nonumber 
 \end{eqnarray}
-那么在 $U, V$ 中线性无关的 $\{u_1, ..., u_m \}$ 和 $\{ v_1, ..., v_n \}$，它们的乘积 $\{ u_i \otimes v_i \}$ 在 $W$ 中仍然是线性无关的。  换句话说：
+那么在 $U, V$ 中线性无关的 $\{u_1, ..., u_m \}$ 和 $\{ v_1, ..., v_n \}$，它们的乘积 $\{ u_i \otimes v_i \}$ 在 $W$ 中仍然是线性无关的。  这是 tensor product 的一个 defining property，换句话说：
 $$ \mbox{线性无关集} \otimes \mbox{线性无关集} \mapsto \mbox{线性无关集} $$
 而这正是我们需要的，因为根据「scalar = 逻辑命题真假值」的诠释，这正是命题之间不「相撞」的条件。
 
 Antony Browne \& Ron Sun 的较早的论文《Connectionist inference models, 2001》\cite{Browne2001}有讲述更多 neural-symbolic integration 的做法。
+
+\section{Coecke-Sadrzadeh-Clark representation}
+
+这是 Coecke, Sadrzadeh, Clark (2010)\cite{Coecke2010} 提出的表示法。
+
+它首先是基於 categorial grammar（类型语法），那是一种有「左右除法」的文法，例如在\english{John likes Mary} 这句子中，\english{likes} 的类型是：
+$$ likes := (S\backslash NP)/NP $$
+意思是当\english{likes} 这个字，在左边乘一个 noun phrase，右边乘另一个 noun phrase，之后便可得到一个句子 S。 这种文法由 Lambek 1958 年开创。
+
+换成 tensor product，\english{likes} 表示成一支 vector：
+$$ \overrightarrow{likes} \in N \otimes S \otimes N $$
+这是很合理的，因为 这个 tensor product space，它的元素就是那些 multi-linear functions：
+$$ f : N \times N \rightarrow S. $$
 
 \section{Metric embedding}
 
@@ -684,11 +699,11 @@ $bird \, X \supset can \, fly \, X$ \\
 \end{figure}
 
 \section*{Appendix: XXXX}
+\end{comment}
 
 \section*{Acknowledgments}
 
-I am heavily indebted to Pei Wang \cite{Wang2006} \cite{Wang2013} and Ben Goertzel \cite{Goertzel2011} for their seminal contributions to AGI.  To Abram Demski and Russell Wallace -- we have spent years exploring many ideas in logic.  Also thanks to Matt Mahoney, Jeff Thompson for discussions of the draft.  William Taysom, Seh, and Joseph Cheung helped implement the code.
-\end{comment}
+最近在香港认识了两个朋友，Dr 陈启良 (CUHK) 和 Dr 譚志斌 (HSMC)，和他们谈过我的 AI 理论之后获益良多。
 
 \bibliographystyle{plain} % or number or aaai ...
 \bibliography{AGI-book}
