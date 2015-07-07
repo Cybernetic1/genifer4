@@ -24,6 +24,7 @@
 %\usepackage{times} % gives you a bit more space if needed
 \usepackage{titlesec}		% change color of section headings
 \usepackage{verbatim}
+\usepackage[most]{tcolorbox}		% color box
 
 \makeatletter
 \newsavebox{\@brx}
@@ -43,6 +44,7 @@
 \renewcommand\abstractname{\textcolor{blue}{Abstract}}
 
 \definecolor{LogicColor}{rgb}{0.4,0.1,0.4}  % Magenta
+\definecolor{Hilight}{rgb}{0.9,0.9,0.8}  % Magenta
 % \definecolor{LogicColor}{rgb}{0,0,0}	% for black-and-white paper
 
 \newcommand{\concept}[1]{\textbf{\textcolor{blue}{#1}}}
@@ -50,10 +52,13 @@
 \newcommand{\english}[1]{\rmfamily \textit{``#1''}\rmfamily}
 \newcommand{\formula}[1]{\textcolor{LogicColor}{#1}}
 
+\newcommand{\hilight}[1]{\begin{tcolorbox}[breakable]#1\end{tcolorbox}}
+
+\newcommand{\tab}{\hspace*{1cm}}
+
 \newcommand{\df}{f} %probability density function
 \newcommand{\dfo}{f1} %other probability density function
 \newcommand{\fv}{x} %fuzzy variable
-\newcommand{\tab}{\hspace*{1cm}}
 \newcommand{\zand}{\; \tilde{\wedge} \;}
 \newcommand{\zor}{\; \tilde{\vee} \;}
 \newcommand{\PimpL}{\leftarrowtriangle}
@@ -81,7 +86,7 @@
 \tab\tab\tab \parbox{9cm}{\textit{No problem can withstand the assault of sustained thinking.}}
 % \vspace{-0.5cm}
 \begin{flushright}
-\textemdash\, Voltaire \hspace{3cm}
+\textemdash\, Voltaire \hspace*{2cm}
 \end{flushright}
 
 \sffamily
@@ -96,11 +101,34 @@
 \noindent 本文介绍人工智能 Genifer4 的理论，特别是对数学专业的人。 Genifer4 的目的是将 logic-based AI (例如 OpenCog, NARS, Genifer3) 转移到向量空间的架构下，令我们可以使用「连续」的技巧，例如算子、迭代法、梯度下降等。 这些技巧可能比较快。
 \end{comment}
 
-我也想写到满纸公式，但不能写公式的时候唯有做文字理论了。
+% 我也想写到满纸公式，但不能写公式的时候唯有做文字理论了。
+% Distributive 的目的是 graceful。  如果用\textbf{点}的话可能没有 grace。
 
-Distributive 的目的是 graceful。  如果用\textbf{点}的话可能没有 grace。
+现在来 recap 一下，我想做的是什么...
 
+首先，我们有一个原子概念的集合 $A = \{ \mbox{男人}, \mbox{女人}, \mbox{爱}, \mbox{恨}, \mbox{足球},... \}$，在抽象代数中这个集通常叫作 alphabet，它的元素叫字母 (letters)。 
 
+2013 年，Tom\'{a}\v{s} Mikolov 等人在 Google 研究出 Word2Vec，引起了广泛影响。  基本上它将离散的词汇集合映射到连续的向量空间（需要某种近似），这个近似是基於所谓的分布性原理 (Distributional Hypothesis)，即是说： 两个词如果分布相似，即经常出现在相似的句子中，它们的语义也会相近。 
+
+我们的目的不是探讨如何计算词汇的 distributive representation，而是假设在原始概念的层次上，这份工作已经做好，不管是用 Word2Vec 或其他的方法。  
+
+% 给定一个字 $w$，Word2Vec 计算它最有可能的上下文 $c$，而 $c$ 是用参数 $\theta$ 给出的：
+% $$ \arg \max_\theta \prod_{(w,c) \in D} p(c|w; \theta) $$
+
+我们要处理的问题是： 由\textbf{词语}过渡到\textbf{句子}，进而从事\textbf{推理}和\textbf{学习}。
+
+表达句子的方法：
+\begin{itemize}
+\item 最简单可以只是 3 个元素构成的 $a \, R \, b$。
+\item Smolensky 提出的 tensor 方法，可以表达任何树状结构。
+\item 最新的研究方向，人们发现句子的结构和抽象代数的结构是一样的，所以注意力转移到抽象的範畴的研究，例如这本书：
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{quantum-physics-and-linguistics-book-cover.png}
+\end{figure}
+\end{itemize}
+
+其中最一般的範畴是 monoidal categories，或者叫 tensor categories。  在向量空间里的 tensor product 是这个範畴中的一个例子。  换句话说，我们基本上是用 tensor product 来表达句子； 範畴论只是将这一点说得更一般化和抽象化而已。
 
 \section{New insights}
 
@@ -112,10 +140,13 @@ Distributive 的目的是 graceful。  如果用\textbf{点}的话可能没有 g
 
 人的词汇 (vocabulary) 的个数大约在 3,000 至 10,000's 之间。  暂时假设我们可以用 dimensionality reduction 把原始概念的个数缩小到 3000，那么概念空间 $C$ 的维数就是 3000。
 
+\hilight{
 如果只考虑像 $a\, R\, b$ 那样的关系，则命题空间是 $C \times C \times C$，维数是 $3000 \times 3 = 9K $。 但如果是 $ C \otimes C \otimes C $ 则维数是 $ 3000^3 = 9G $。 现时的电脑记忆（例如 GPU）似乎可以处理后者。
+}
 
 \subsection{Distributive representation}
 
+\hilight{
 如果每个概念是向量空间中的一个独立分量，似乎很浪费空间。  在神经网络中通常用\textbf{分布式}的表示法：
 \begin{figure}[H]
 \centering
@@ -133,6 +164,7 @@ $ (w^T x \leq b) $ 表示一个 hyperplane 的切割。
 矩阵 $W$ 对应於一层神经网络中的 weights。
 
 问题是这个表示法，如何表示乘积？  在这个表示法中，「线性无关」代表什么？
+}
 
 \subsection{「连续性」}
 
@@ -154,6 +186,7 @@ $$ T_1 v + T_2 v + ... + T_n v = \mathcal{T} v $$
 
 \subsection{Second-order}
 
+\hilight{
 还有一个 "second-order" 的想法。  在 first-order 我们的算子是这个形式：
 $$ T: V \rightarrow V $$  
 但 second-order 的做法是将所有\textbf{物体}都看成是算子，算子可以作用在算子之上，这似乎是一种 duality。 
@@ -184,9 +217,13 @@ $L$ 是由结论 $K_\infty$ 到法则 $R$ 的映射，可以叫 $L$ 做 learning
 \includegraphics[scale=0.6]{2nd-order-maps-3.png}
 \end{figure}
 
-\subsection{逻辑是什么？}
+问题是 $R$ 的空间太大... 但 $R$ 是所有有意识的知识... 不想直接近似 $R$，但如何间接地近似它？  
+}
 
-現在概括一下逻辑是什么：  一个逻辑系统 $\mathcal{L} = \{ C, P, d(\cdot,\cdot), \subseteq \}$：
+\subsection{Metric 从何而来？}
+
+\hilight{
+現在概括一下\textbf{逻辑系统}是什么。  $\mathcal{L} = \{ C, P, +, \rightarrow, d(\cdot,\cdot), \subseteq \}$ 包含以下元素：
 \begin{enumerate}
 \item 原子概念集 $C \ni c_1, c_2, ...$
 \item 命题集 $P \ni p_1, p_2, ...$ （可以限制在简单关系 $a\, R\, b$）
@@ -200,27 +237,26 @@ $L$ 是由结论 $K_\infty$ 到法则 $R$ 的映射，可以叫 $L$ 做 learning
 $$ f = g \quad \Leftrightarrow \quad \forall x. \; f(x) = g(x). $$
 它原本是描述两个函数的相等，但我们可以将它普及到任何概念的乘积：
 $$ c_1 \approx c_2 \quad \Leftrightarrow \quad \forall_\# P, P'. \; P[c_1], P'[c_2]. $$
-这是说： 概念 $c_1$ 和 $c_2$ 相似，如果它们经常出现在相似的命题之中。  $\forall_\#$ 是 probabilistic quantification，它计算所有命题中相似者的份数。  $d(\cdot, \cdot)$ 是 $\approx$ 的量度。
+这是说： 概念 $c_1$ 和 $c_2$ 相似，如果它们经常出现在相似的命题之中。  $\forall_\#$ 是 probabilistic quantification，它计算所有命题中相似者的比例。  $d(\cdot, \cdot)$ 是 $\approx$ 的量度。
 
 有了 $\approx$ 关系，可以用 hierarchical clustering 建立 $\subseteq$ 关系（注意这里的 $\subseteq$ 包含我们平时所说的 $\subseteq$ 和 $\in$ 关系）。
 
+其实 $\subseteq$ 和 $\approx$ 基本上是\textbf{等价}的。  例如，学习过程中我们观察到猫和狗有相似的句子：
+$$ \forall_\# P: P[\mbox{猫}], P[\mbox{狗}] $$
+於是我们可以归纳出「猫 $\approx$ 狗」，但我们也可以新增一个类别：「动物 $\supseteq$ 猫，狗」。  换句话说，我们说某些物体\textbf{相似}，也可以说它们是\textbf{同类}。
+
+$\approx$ 和 $\subseteq$ 之间的关系是：
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{ontology-meta-relations.png}
+\end{figure}
+
 我们想把这个结构映射到 Banach 空间。
 
-\begin{comment}
-\section{Hyperbolic 的好处 ???}
+虽然这个 metric 很难计算，但它可能是我们的学习问题里唯一比较合理的结构，除了用它之外可能没有其他选择。
 
-那个 $\supseteq$ 关系可能要用空间中的 cones 来表示，而且用 hyperbolic geometry 可能比较好。
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.6]{Euclidean-cones.png}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.4]{hyperbolic-cones.png}
-\end{figure}
-\end{comment}
+这个 metric 其实不是良好定义的，因为它可能不会 converge。  举例来说，Reimann hypothesis 原来和质数的分布有关，但这关系在1859年以前人们还不知道。  在逻辑上我们可以推导出很深的关系，这似乎是永无止境的。  但如果我们假设可以得到近似的 metric，这个 heuristic 也许还不错。
+}
 
 \section{Neural Tensor Network}
 
@@ -241,6 +277,30 @@ father(john, pete) & \Leftrightarrow & father \otimes john \otimes pete \nonumbe
 Var_1 : val_1, Var_2 : val_2 & \Leftrightarrow & Var_1 \otimes val_1 + Var_2 \otimes val_2 \nonumber 
 \end{eqnarray}
 第二句的意思是，variable 1 的值是 value 1，variable 2 的值是 value 2。 
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+                    & Example & Vector representation \\
+\hline
+Set element         & $\{ c_1, c_2 \}$ & $ c_1 + c_2 $ \\ 
+\hline
+Filler-role binding & $ AB = \{ A \backslash r_1, B \backslash r_2\} $ & $ A \otimes r_0 + B \otimes r_1 $\\
+\hline
+Recursive structure & \raisebox{-.5\height}{\includegraphics[scale=0.5]{Smolensky-tree.png}} & $A \otimes r_0 + [BC] \otimes r_1$ \\
+\hline
+\end{tabular}
+\end{center}
+
+$$ s = \quad \raisebox{-.5\height}{\includegraphics[scale=0.75]{Smolensky-tree.png}} $$
+
+\begin{eqnarray}
+s &=& A \otimes r_0 + q \otimes r_1 \nonumber \\
+q &=& B \otimes r_0 + C \otimes r_1 \nonumber \\
+\therefore \; s &=& A \otimes r_0 + B \otimes r_0 \otimes r_1 + C \otimes r_1 \otimes r_1 \nonumber
+\end{eqnarray}
+
+和我的 naive 办法相比，有什么分别？  
 
 我在博客\footnote{\href{http://geniferology.blogspot.hk/2015/03/what-are-tensors.html}{blog post}}上解释过，tensor 是所有 bi-linear forms 的 universal form。 如果有向量空间 $U$ 和 $V$，
 \begin{eqnarray}

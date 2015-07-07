@@ -187,6 +187,20 @@ Cayley graph 的原理很简单，例如下图是 $\{ a, b \}$ 两个元素产�
 
 在双曲几何中直线变成圆弧，而神经网络将空间切割的方法也包含线性的 $Y = \sigmoid(\sum W_i X_i)$，或许可以制造一种 hyperbolic neuron？  可惜因为不连续的问题，这方案暂时搁置。
 
+\subsection{Hyperbolic 的好处?}
+
+那 $\subseteq$ 关系可以用空间中的 cones 来表示，我先前以为用 hyperbolic geometry 描述这些 cones 可能比较好，但后来发现 Euclidean 几何中也可以用直线描述这些 cones，似乎 hyperbolic 在这方面没有特别的优势。
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{Euclidean-cones.png}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{hyperbolic-cones.png}
+\end{figure}
+
 \section{Distributive vector representation (DVR)}
 
 这是一个较好的方案，似乎可以解决\textbf{连续性}的问题。
