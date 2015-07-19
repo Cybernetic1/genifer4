@@ -70,17 +70,17 @@
 \setlength{\evensidemargin}{1cm}
 \setlength{\textwidth}{14cm}
 
-\title{\textcolor{blue}{Genifer 4.1 theoretical notes}}
+\title{\textcolor{blue}{Genifer 4.2 theoretical notes}}
 \author{YKY (\textit{甄景贤})}
 %\date{27 May 2015}
 % \institute{}
 
 \begin{document}
 
-\tab\tab\tab \parbox{9cm}{\textit{The ultimate goal of mathematics is to eliminate any need for intelligent thought.}}
+\tab\tab\tab \parbox{10cm}{\textit{I recall with amusement Eckert's reaction to the impending visit. He said that he could tell whether von Neumann was really a genius by his first question. If this was about the logical structure of the machine, he would believe in von Neumann, otherwise not. Of course this was von Neumann's first query.}}
 % \vspace{-0.5cm}
 \begin{flushright}
-\textemdash\, Alfred North Whitehead \hspace{1cm}
+\textemdash\, Goldstine \\The Computer from Pascal to von Neumann [1972]
 \end{flushright}
 
 \sffamily
@@ -97,12 +97,12 @@ Let me recap a bit, what I've been trying to do....
 
 In 2013, Tom\'{a}\v{s} Mikolov et al in Google created \textbf{Word2Vec}, that became very influential.  Basically it associates to each (English) word a vector in continuous space (that requires some form of approximation), and this approximation is based on the \textbf{Distributional Hypothesis}, which says, ``words that are used and occur in the same contexts tend to purport similar meanings''.
 
-My purpose is not to explore how to calculate the distributive representation of words (or concepts), but to build up from this representation of primitive concepts, assuming that this task is completed, whether it uses Word2Vec or some other methods.
+My purpose is not to explore how to calculate the distributive representation of words (or concepts), but to build upon this representation of primitive concepts, assuming that this task is completed, whether it uses Word2Vec or some other methods.
 
 % 给定一个字 $w$，Word2Vec 计算它最有可能的上下文 $c$，而 $c$ 是用参数 $\theta$ 给出的：
 % $$ \arg \max_\theta \prod_{(w,c) \in D} p(c|w; \theta) $$
 
-Our goal is to pass from \textbf{words} to \textbf{sentences}, and then to perform upon them \textbf{deduction} and \textbf{inductive learning}.
+Our goal is to pass from \textbf{words} to \textbf{sentences}, and then to perform \textbf{deduction} and \textbf{inductive learning} over sentences.
 
 \section{Deduction}
 
@@ -149,12 +149,20 @@ So the logic sub-system would be a module inside the RL.  Question is how to lin
 
 The RL can be viewed as a black box that inputs $\{ states, actions, rewards \}$ and outputs a $policy$.  In order for RL to control the logic sub-system, we need to view the logic inference engine as a machine with controls.  What are the internal \textbf{states} of this engine?  What are the \textbf{actions} that transform the states?  What are the rewards?
 
+I don't have a solution yet, just a few points:
+
+\subsection{Logic as an external teacher}
+
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.5]{boomerang.jpg}
+\includegraphics[scale=0.25]{boomerang.jpg}
 \end{figure}
 
-Say you have a boomerang, you learn to throw the boomerang so that it flies back to you beautifully.  That is the job of the RL, to learn how to act in the real world.  The logic sub-system can also be viewed as an object in the real world, which we could \textit{manipulate}.  But something is tricky here: the inference engine \textit{itself} derives logical conclusions to advice the RL on decisions and actions.  
+Say you have a boomerang, you learn to throw the boomerang so that it flies back to you beautifully.  That is the job of the RL, to learn how to act in the real world.  The logic sub-system can also be viewed as an object in the real world, which we could \textit{manipulate}.  But something is tricky here: the inference engine \textit{itself} derives logical conclusions to advice the RL on decisions and actions.
+
+Think carefully, there is no ``bad recursion'' here.  The inference engine can be regarded as a teacher.  It suggests to the RL some actions.  The RL can accept or deny to perform those actions.  If it does accept, the RL observes how good is the outcome.  Then it can \textit{adjust} or \textit{fine tune} the teacher accordingly.  In the entire process above, the teacher is an \textit{external} entity manipulated by the RL.
+
+\subsection{How to invoke the inference engine?}
 
 On the highest level, the inference engine can only perform 2 actions:  deduction and inductive learning.  We need to \textit{refine} these actions so the RL can ``micro-control'' the inference engine.
 
@@ -166,9 +174,104 @@ and this should result in an act of urination.  This means that we should recogn
 
 We can put data into the KB to cause the inference engine to perform specific reasoning tasks.  For example, ``I am in the middle of a busy street, I feel like urinating, should I pee?''
 
-In my model, the cognitive state vector can also store \textit{internal} or \textit{intermediate} variables, similar to the registers of a Turing machine \footnote{That is the similarity between my model and Neural Turing Machines. The Turing machine's basic operations are \textit{read}, \textit{write} and \textit{move tape}, which are very primitive.  But my model can perform logical operations which are significantly more advanced.}.  
+In my model, the cognitive state vector can also store \textit{internal} or \textit{intermediate} variables, similar to the registers of a Turing machine \footnote{That is the similarity between my model and Neural Turing Machines. The Turing machine's basic operations are \textit{read}, \textit{write} and \textit{move tape}, which are very primitive.  Whereas my model can perform logical operations which are much more advanced.}.  
 
-So the RL can alter $G$ to control the inference engine's performance.  The state of the inference engine is $G$, and the reward is 
+So the RL can alter $G$ to control the inference engine's performance (these are the control actions from the RL's perspective).  The state of the inference engine is $G$, and the rewards are observed from how well the logic engine performs as a teacher.
+
+\section{Tensor product representations}
+
+\begin{itemize}
+\item The most basic is the relation $a \, R \, b$ with 3 elements
+\item Smolensky's method, which can represent any recursive tree structure
+\item In a fairly new research direction, people realize that linguistic structure is identical to abstract algebraic structure, so attention is shifted to studying abstract categories.  For example this book:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{quantum-physics-and-linguistics-book-cover.png}
+\end{figure}
+\end{itemize}
+
+The most general categories are \textbf{monoidal categories}, also called \textbf{tensor categories}.  The tensor product of vector spaces is an example in this category.  Essentially we are using tensor products to represent sentences;  Category theory provides a more general and abstract framework.
+
+\subsection{Neural Tensor Network}
+
+Andrew Ng is from Hong Kong, he taught a famous machine learning course in Coursera.  Recently he left Stanford to join Baidu (the Chinese search engine).
+
+Socher, Chen, Manning, and Ng proposed the NTN model in 2013 \cite{Socher2013}：
+$$ \top(a\, R\, b) = u^T \; \sigmoid \, (a^T \, U \, b + W {{a}\choose{b}} + c ) $$
+$\top(a\, R\, b)$ is the \textbf{strength} of the relation $a\, R\, b$.\\
+$U$ is a tensor, it takes two vectors $a, b$ and gives a third vector $a^T \, U \, b$ (this obeys the bi-linear property of tensors).\\
+$W$ is a matrix, $W {{a}\choose{b}}$ is a layer of traditional neural network, $\sigmoid$ is a non-linear threshold function.\\
+$u^T$ is a single neuron, it's purpose is to add up the different components, giving a number.
+
+\subsection{Paul Smolensky}
+
+Paul Smolensky's book is \textit{The Harmonic Mind} (2006)\cite{Smolensky2006}.  Volume 1 is AI theory, Volume 2 is linguistic theory.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{the-harmonic-mind-cover.jpg}
+\end{figure}
+
+He suggests to use tensors to represent relations;  Generally speaking:
+\begin{eqnarray}
+father(john, pete) & \Leftrightarrow & father \otimes john \otimes pete \nonumber \\
+Var_1 : val_1, Var_2 : val_2 & \Leftrightarrow & Var_1 \otimes val_1 + Var_2 \otimes val_2 \nonumber 
+\end{eqnarray}
+The second line means: $variable_1$ takes value $value_1$，$variable_2$ takes value $value_2$.
+
+He also introduced the notions of ``roles'' and ``fillers'': $variable_i$ is a role, $value_i$ is a filler.  Using this method to handle variable binding, the advantage is that it can avoid the $ A \cdot B = B \cdot A $ problem.
+
+For example, in natural language we could have a sentence structure like this:
+$$ s = \quad \raisebox{-.5\height}{\includegraphics[scale=0.75]{Smolensky-tree.png}} $$
+
+$r_0$ and $r_1$ are respectively the tree's left and right children's roles.  Expressed as a tensor product:
+\begin{eqnarray}
+s &=& A \otimes r_0 + q \otimes r_1 \nonumber \\
+q &=& B \otimes r_0 + C \otimes r_1 \nonumber \\
+\therefore \; s &=& A \otimes r_0 + B \otimes r_0 \otimes r_1 + C \otimes r_1 \otimes r_1 \nonumber
+\end{eqnarray}
+
+The good thing about tensor products is that, $r_0$ and $r_0 \otimes r_1$ are different elements, they would not "clash".  A drawback is that as the length of the tensor product grows, its dimension also grows very fast.
+
+The following table summarizes Smolensky's approach:
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+                    & Example & Vector representation \\
+\hline
+Set element         & $\{ c_1, c_2 \}$ & $ c_1 + c_2 $ \\ 
+\hline
+Filler-role binding & $ AB = \{ A \backslash r_1, B \backslash r_2\} $ & $ A \otimes r_0 + B \otimes r_1 $\\
+\hline
+Recursive structure & \raisebox{-.5\height}{\includegraphics[scale=0.5]{Smolensky-tree.png}} & $A \otimes r_0 + [BC] \otimes r_1$ \\
+\hline
+\end{tabular}
+\end{center}
+
+% 和我的 naive 办法相比，有什么分别？  
+
+As I have explained on my blog \footnote{\href{http://geniferology.blogspot.hk/2015/03/what-are-tensors.html}{blog post}} before, tensors are the universal form of all bi-linear forms.  If we have 2 vector spaces $U$ and $V$,
+\begin{eqnarray}
+T: & U \otimes V \rightarrow W \nonumber \\
+t: & u \otimes v \mapsto w \nonumber 
+\end{eqnarray}
+and 2 sets of vectors in $U, V$ that are linearly independent, $\{u_1, ..., u_m \}$ and $\{ v_1, ..., v_n \}$, then their product $\{ u_i \otimes v_i \}$ in $W$ would still be linearly-independent.  This is a \textit{defining property} of tensor products, in other words:
+$$ \mbox{linear independent set} \otimes \mbox{linear independent set} \mapsto \mbox{linear independent set} $$
+and this is precisely what we need, because under the ``scalar = logic truth value'' interpretation, this is precisely the condition where propositions would not ``clash''.
+
+Antony Browne \& Ron Sun's earlier paper ``Connectionist Inference Models'' (2001) \cite{Browne2001} talks more about various neural-symbolic integration schemes.
+
+\subsection{Coecke-Sadrzadeh-Clark}
+
+This representation is proposed by Coecke, Sadrzadeh, Clark in 2010 \cite{Coecke2010}.
+
+Firstly it is based on \textbf{categorial grammar}, which is a grammar with ``left'' and ``right'' multiplications.  For example, in the sentence \english{John likes Mary}, the type of \english{likes} is:
+$$ likes := (S\backslash NP)/NP $$
+That means when the word \english{likes} is multiplied by a noun phrase on the left, and another noun phrase on the right, we obtain a sentence S.  This kind of grammar is pioneered by Lambek in 1958.
+
+Translating to tensor products, \english{likes} is represented as a vector:
+$$ \overrightarrow{likes} \in N \otimes S \otimes N $$
+which makes sense, because this tensor product space contains as elements the multi-linear functions:
+$$ f : N \times N \rightarrow S. $$
 
 %\section*{Appendix: XXXX}
 
